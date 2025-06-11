@@ -1,13 +1,14 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
 
-const API_URL = process.env.API_URL || "http://localhost:2000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:2000";
 
 export async function fetchWithAuth(endpoint, options = {}) {
   const session = await getSession();
 
-  if (!session) {
-    throw new Error("Not authenticated");
+  if (!session || !session.idToken) {
+    console.warn("Session or ID token not found:", session);
+    throw new Error("Not authenticated or missing ID token");
   }
 
   try {
@@ -24,6 +25,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
 
     return response.data;
   } catch (error) {
-    throw new Error("Api request failed");
+    console.error("API request failed", error.response?.data || error.message);
+    throw new Error("API request failed");
   }
 }
