@@ -4,11 +4,11 @@ import { getSession } from "next-auth/react";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:2000";
 
 export async function fetchWithAuth(endpoint, options = {}) {
-  const session = await getSession();
+  let session = await getSession();
 
   if (!session || !session.idToken) {
-    console.warn("Session or ID token not found:", session);
-    throw new Error("Not authenticated or missing ID token");
+    console.error("No valid session or idToken found");
+    throw new Error("Not authenticated");
   }
 
   try {
@@ -18,6 +18,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
       headers: {
         Authorization: `Bearer ${session.idToken}`,
         ...options.headers,
+         "Content-Type": "application/json",
       },
       data: options.body,
       params: options.params,
@@ -25,7 +26,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
 
     return response.data;
   } catch (error) {
-    console.error("API request failed", error.response?.data || error.message);
-    throw new Error("API request failed");
+    console.error("API request failed", error);
+    throw error;
   }
 }

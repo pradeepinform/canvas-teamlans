@@ -4,24 +4,19 @@ export async function getUserDesigns() {
   return fetchWithAuth("/designs");
 }
 
-export async function getUserDesignByID(designId) {
-  return fetchWithAuth(`/designs/${designId}`);
+export async function getUserDesignByID(id) {
+  return fetchWithAuth(`/designs/${id}`);
 }
 
 export async function saveDesign(designData, designId = null) {
   return fetchWithAuth(`/designs`, {
     method: "POST",
-    body: {
-      ...designData,
-      designId,
-    },
+    body: { ...designData, designId },
   });
 }
 
-export async function deleteDesign(designId) {
-  return fetchWithAuth(`/designs/${designId}`, {
-    method: "DELETE",
-  });
+export async function deleteDesign(id) {
+  return fetchWithAuth(`/designs/${id}`, { method: "DELETE" });
 }
 
 export async function saveCanvasState(
@@ -46,4 +41,12 @@ export async function saveCanvasState(
     console.error("Error saving canvas state:", error);
     throw error;
   }
+}
+
+//  Correct updateDesignName function using fetchWithAuth
+export async function updateDesignName(id, name) {
+  return fetchWithAuth(`/designs/${id}`, {
+    method: "PUT",
+    body: { name },
+  });
 }

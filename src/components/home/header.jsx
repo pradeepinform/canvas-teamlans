@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Search, Star } from "lucide-react";
+import { LogOut, Search } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { Input } from "../ui/input";
 import {
@@ -27,8 +27,8 @@ function Header() {
           placeholder="Search your Projects and Canva's"
         />
       </div>
-      <div className="flex items-center gap-5  ml-4">
-        <div className="flex items-center  gap-1 cursor-pointer">
+      <div className="flex items-center gap-5 ml-4">
+        <div className="flex items-center gap-1 cursor-pointer">
           <DropdownMenu>
             <DropdownMenuTrigger aschild="true">
               <div className="flex items-center space-x-2 ">
@@ -37,24 +37,24 @@ function Header() {
                     {session?.user?.name?.[0] || "U"}
                   </AvatarFallback>
                   <AvatarImage
-                    src={session?.user?.image || "/placeholder-user.jpg"}
+                    src={session?.user?.image}
                   />
                 </Avatar>
               </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <div className="flex flex-col items-center gap-2 p-2">
-                <span className="text-sm font-medium">
+              <div className="flex flex-col items-center py-4">
+                <span className="text-lg font-medium">
                   {session?.user?.name || "User"}
                 </span>
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="cursor-pointer w-full justify-center"
-                >
-                  <LogOut className="mr-2 w-4 h-4" />
-                  <span className="font-bold">Log out</span>
-                </DropdownMenuItem>
               </div>
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="cursor-pointer justify-center py-2 font-bold text-red-600"
+              >
+                <LogOut className="mr-2 w-4 h-4" />
+                Log out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

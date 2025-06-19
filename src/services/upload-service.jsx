@@ -1,8 +1,7 @@
 import axios from "axios";
 import { getSession } from "next-auth/react";
-import { fetchWithAuth } from "./base-service";
 
-const API_URL = process.env.API_URL || "http://localhost:2000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:2000";
 
 export async function uploadFileWithAuth(file, metaData = {}) {
   const session = await getSession();

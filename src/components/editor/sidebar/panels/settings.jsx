@@ -23,24 +23,40 @@ function SettingsPanel() {
   const [gradients, setGradients] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🆕 Gradient Type State (used with custom gradients)
+  // 🆕 Gradient Type State
   const [gradientType, setGradientType] = useState("linear");
 
+  // Gradient Fetch with structure validation
   useEffect(() => {
-    const fetchGradients = async () => {
-      try {
-        const res = await fetch("http://localhost:2000/api/gradients/");
-        const data = await res.json();
-        setGradients(data);
-      } catch (error) {
-        console.error("Error fetching gradients:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchGradients = async () => {
+    try {
+      const res = await fetch("http://localhost:2000/api/gradients", {
+        method: "GET",
+        credentials: "include", // अगर cookie में token भेज रहे हैं
+      });
 
-    fetchGradients();
-  }, []);
+      const data = await res.json();
+      console.log("Fetched gradients:", data);
+
+      if (Array.isArray(data)) {
+        setGradients(data);
+      } else if (Array.isArray(data.gradients)) {
+        setGradients(data.gradients);
+      } else {
+        console.warn("Unexpected gradient data:", data);
+        setGradients([]);
+      }
+    } catch (error) {
+      console.error("Error fetching gradients:", error);
+      setGradients([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchGradients();
+}, []);
+
 
   useEffect(() => {
     setIsClient(true);
@@ -58,7 +74,7 @@ function SettingsPanel() {
       const gradColors = backgroundColor.colors;
 
       const gradient = new fabric.Gradient({
-        type: backgroundColor.type || "linear", // 🆕 use selected gradient type
+        type: backgroundColor.type || "linear",
         coords:
           backgroundColor.type === "radial"
             ? {
@@ -98,17 +114,13 @@ function SettingsPanel() {
   };
 
   const handleGradientApply = (gradient) => {
-    setBackgroundColor({ type: gradientType, colors: gradient.colors }); // 🆕 include selected type
+    setBackgroundColor({ type: gradientType, colors: gradient.colors });
   };
 
-  // 🆕 Update type when user changes gradient type
   const handleGradientTypeChange = (type) => {
     setGradientType(type);
 
-    if (
-      typeof backgroundColor !== "string" &&
-      backgroundColor?.colors
-    ) {
+    if (typeof backgroundColor !== "string" && backgroundColor?.colors) {
       setBackgroundColor({
         type,
         colors: backgroundColor.colors,
@@ -189,7 +201,7 @@ function SettingsPanel() {
 
           {loading ? (
             <p className="text-sm text-gray-400">Loading gradients...</p>
-          ) : (
+          ) : Array.isArray(gradients) && gradients.length > 0 ? (
             <div className="grid grid-cols-6 gap-2 mb-3">
               {gradients.map((gradient, index) => {
                 const gradientStyle = {
@@ -232,12 +244,14 @@ function SettingsPanel() {
                 );
               })}
             </div>
+          ) : (
+            <p className="text-sm text-gray-400">No gradients found</p>
           )}
         </div>
 
         <Separator />
 
-        {/* 🆕 Gradient Type Selector */}
+        {/* Gradient Type Selector */}
         <div>
           <GradientTypeSelector
             selectedType={gradientType}

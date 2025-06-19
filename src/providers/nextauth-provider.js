@@ -7,4 +7,3 @@ function NextAuthProvider({ children }) {
 }
 
 export default NextAuthProvider;
-

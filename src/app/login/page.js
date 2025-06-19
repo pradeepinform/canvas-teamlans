@@ -1,4 +1,3 @@
-"use client";
 import LoginCard from "@/components/login/login-card";
 import Image from "next/image";
 
@@ -9,7 +8,7 @@ function Login() {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url(https://localdstvinstaller.co.za/wp-content/uploads/2018/08/netflix-1030x579.jpg)",
+            "url(https://static.canva.com/web/images/543d7829999d351b301ced5ed3c1f087.jpg)",
         }}
       />
       <div
@@ -22,10 +21,9 @@ function Login() {
       <div className="absolute top-4 left-4 z-10">
         <Image
           src="https://static.canva.com/web/images/856bac30504ecac8dbd38dbee61de1f1.svg"
-          alt="Teamlans Canva"
+          alt="canva"
           width={90}
           height={30}
-          className="w-24 h-auto"
           priority
         />
       </div>

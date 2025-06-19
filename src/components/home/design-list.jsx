@@ -1,29 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import DesignPreview from "./design-preview";
-import { Loader, Trash2 } from "lucide-react";
-import { deleteDesign, getUserDesigns } from "@/services/design-service";
-//import { useEditorStore } from "@/store";
+import { getUserDesigns, deleteDesign } from "@/services/design-service";
+import { Loader } from "lucide-react";
+import { useEditorStore } from "@/store";
+import DesignCard from "./designCard";
 
-function DesignList({
-  listOfDesigns,
-  isLoading,
-  isModalView,
-  setShowDesignsModal,
-}) {
-  const router = useRouter();
+
+function DesignList({ listOfDesigns, isLoading, isModalView, setShowDesignsModal }) {
   const { setUserDesigns } = useEditorStore();
 
   async function fetchUserDesigns() {
     const result = await getUserDesigns();
-
     if (result?.success) setUserDesigns(result?.data);
   }
 
   const handleDeleteDesign = async (getCurrentDesignId) => {
     const response = await deleteDesign(getCurrentDesignId);
-
     if (response.success) {
       fetchUserDesigns();
     }
@@ -32,33 +24,18 @@ function DesignList({
   if (isLoading) return <Loader />;
 
   return (
-    <div
-      className={`${
-        isModalView ? "p-4" : ""
-      } grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4`}
-    >
-      {!listOfDesigns.length && <h1>No Design Found!</h1>}
+    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-4 gap-4`}>
+      {!listOfDesigns.length && <h1 className="col-span-full text-center">No Design Found!</h1>}
+
       {listOfDesigns.map((design) => (
-        <div key={design._id} className="group cursor-pointer">
-          <div
-            onClick={() => {
-              router.push(`/editor/${design?._id}`);
-              isModalView ? setShowDesignsModal(false) : null;
-            }}
-            className="w-[300px] h-[300px] rounded-lg mb-2 overflow-hidden transition-shadow group-hover:shadow-md"
-          >
-            {design?.canvasData && (
-              <DesignPreview key={design._id} design={design} />
-            )}
-          </div>
-          <div className="flex justify-between">
-            <p className="font-bold text-sm truncate">{design.name}</p>
-            <Trash2
-              onClick={() => handleDeleteDesign(design?._id)}
-              className="w-5 h-5 "
-            />
-          </div>
-        </div>
+        <DesignCard
+          key={design._id}
+          design={design}
+          handleDeleteDesign={handleDeleteDesign}
+          refreshDesigns={fetchUserDesigns}
+          isModalView={isModalView}
+          setShowDesignsModal={setShowDesignsModal}
+        />
       ))}
     </div>
   );

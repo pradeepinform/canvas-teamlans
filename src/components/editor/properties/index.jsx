@@ -216,20 +216,22 @@ function Properties() {
     markAsModified();
   };
 
-  //arrangements
-  const handleBringToFront = () => {
-    if (!canvas || !selectedObject) return;
-    canvas.bringObjectToFront(selectedObject);
-    canvas.renderAll();
-    markAsModified();
-  };
+ // 🔼 Bring selected object to front
+const handleBringToFront = () => {
+  if (!canvas || !selectedObject) return;
+  canvas.bringToFront(selectedObject); // ✅ correct method
+  canvas.renderAll();
+  markAsModified();
+};
 
-  const handleSendToBack = () => {
-    if (!canvas || !selectedObject) return;
-    canvas.sendObjectToBack(selectedObject);
-    canvas.renderAll();
-    markAsModified();
-  };
+// 🔽 Send selected object to back
+const handleSendToBack = () => {
+  if (!canvas || !selectedObject) return;
+  canvas.sendToBack(selectedObject); // ✅ correct method
+  canvas.renderAll();
+  markAsModified();
+};
+
 
   //Flip H and Flip V
   const handleFlipHorizontal = () => {
@@ -372,29 +374,27 @@ const handleImageFilterChange = (value, blurAmount = 10) => {
 
 
 
-  const handleBlurChange = async (value) => {
-    const newBlurValue = value[0];
-    setBlur(newBlurValue);
+const handleBlurChange = async (value) => {
+  const newBlurValue = value[0];
+  setBlur(newBlurValue);
 
-    if (
-      !canvas ||
-      !selectedObject ||
-      selectedObject.type !== "image" ||
-      filter !== "blur"
-    )
-      return;
+  if (
+    !canvas ||
+    !selectedObject ||
+    selectedObject.type !== "image" ||
+    filter !== "blur"
+  )
+    return;
 
-    try {
-      const { filters } = await import("fabric");
-
-      selectedObject.filters = [new filters.Blur({ blur: newBlurValue / 100 })];
-      selectedObject.applyFilters();
-      canvas.renderAll();
-      markAsModified();
-    } catch (error) {
-      console.error("Error while applying blur !", e);
-    }
-  };
+  try {
+    selectedObject.filters = [new Blur({ blur: newBlurValue / 100 })]; // 👈 Use direct Blur class
+    selectedObject.applyFilters();
+    canvas.renderAll();
+    markAsModified();
+  } catch (error) {
+    console.error("Error while applying blur!", error);
+  }
+};
 
   return (
     <div className="fixed right-0 top-[56px] bottom-[0px] w-[280px] bg-white border-l border-gray-200 z-10">
